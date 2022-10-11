@@ -1,0 +1,148 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://app/App.gd" type="Script" id=1]
+[ext_resource path="res://player/Player.gd" type="Script" id=2]
+[ext_resource path="res://map/Map.tscn" type="PackedScene" id=3]
+[ext_resource path="res://app/Staus.gd" type="Script" id=4]
+[ext_resource path="res://app/Menu.gd" type="Script" id=5]
+[ext_resource path="res://app/dimention_btn_group.tres" type="ButtonGroup" id=6]
+[ext_resource path="res://app/p2_buttongroup.tres" type="ButtonGroup" id=7]
+[ext_resource path="res://app/p1_buttongroup.tres" type="ButtonGroup" id=8]
+[ext_resource path="res://font/CreatoDisplay-Black.otf" type="DynamicFontData" id=9]
+
+[sub_resource type="DynamicFont" id=1]
+size = 40
+font_data = ExtResource( 9 )
+
+[node name="App" type="Node"]
+script = ExtResource( 1 )
+player1_type = 0
+
+[node name="Menu" type="Node2D" parent="."]
+script = ExtResource( 5 )
+
+[node name="NewGameBtn" type="Button" parent="Menu"]
+margin_left = 1029.0
+margin_top = 229.0
+margin_right = 1181.0
+margin_bottom = 273.0
+text = "new game"
+
+[node name="D3Btn" type="Button" parent="Menu"]
+margin_left = 1026.0
+margin_top = 18.0
+margin_right = 1066.0
+margin_bottom = 58.0
+toggle_mode = true
+pressed = true
+group = ExtResource( 6 )
+text = "3X3"
+
+[node name="D4Btn" type="Button" parent="Menu"]
+margin_left = 1081.0
+margin_top = 18.0
+margin_right = 1121.0
+margin_bottom = 58.0
+toggle_mode = true
+group = ExtResource( 6 )
+text = "4X4"
+
+[node name="D5Btn" type="Button" parent="Menu"]
+margin_left = 1135.0
+margin_top = 18.0
+margin_right = 1175.0
+margin_bottom = 59.0
+toggle_mode = true
+group = ExtResource( 6 )
+text = "5X5"
+
+[node name="Label1" type="Label" parent="Menu"]
+modulate = Color( 0.960784, 0.0156863, 0.0156863, 1 )
+margin_left = 1028.0
+margin_top = 83.0
+margin_right = 1068.0
+margin_bottom = 97.0
+rect_pivot_offset = Vector2( 26, 9 )
+text = "Plaer1"
+
+[node name="P1AiBtn" type="Button" parent="Menu"]
+margin_left = 1026.0
+margin_top = 103.0
+margin_right = 1094.0
+margin_bottom = 127.0
+toggle_mode = true
+group = ExtResource( 8 )
+text = "AI"
+
+[node name="P1HumanBtn" type="Button" parent="Menu"]
+margin_left = 1110.0
+margin_top = 103.0
+margin_right = 1181.0
+margin_bottom = 127.0
+toggle_mode = true
+pressed = true
+group = ExtResource( 8 )
+text = "Human"
+
+[node name="P2AiBtn" type="Button" parent="Menu"]
+margin_left = 1029.0
+margin_top = 167.0
+margin_right = 1094.0
+margin_bottom = 191.0
+toggle_mode = true
+pressed = true
+group = ExtResource( 7 )
+text = "AI"
+
+[node name="P2HumanBtn" type="Button" parent="Menu"]
+margin_left = 1110.0
+margin_top = 167.0
+margin_right = 1181.0
+margin_bottom = 191.0
+toggle_mode = true
+group = ExtResource( 7 )
+text = "Human"
+
+[node name="Label2" type="Label" parent="Menu"]
+modulate = Color( 0.00784314, 0.0862745, 0.92549, 1 )
+margin_left = 1027.0
+margin_top = 147.0
+margin_right = 1067.0
+margin_bottom = 161.0
+rect_pivot_offset = Vector2( 26, 9 )
+text = "Plaer2"
+
+[node name="Label" type="Label" parent="Menu"]
+margin_left = 880.0
+margin_top = 398.0
+margin_right = 947.0
+margin_bottom = 431.0
+text = "Status:"
+
+[node name="Status" type="Label" parent="Menu"]
+margin_left = 875.0
+margin_top = 430.0
+margin_right = 1069.0
+margin_bottom = 558.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "|"
+
+[node name="Map" parent="." instance=ExtResource( 3 )]
+
+[node name="Player1" type="Node" parent="."]
+script = ExtResource( 2 )
+map_path = NodePath("../Map")
+color = Color( 0.768627, 0.0588235, 0.0588235, 1 )
+id = -1
+
+[node name="Player2" type="Node" parent="."]
+script = ExtResource( 2 )
+type = 100
+map_path = NodePath("../Map")
+color = Color( 0.215686, 0.247059, 0.74902, 1 )
+
+[node name="Canvas" type="Node2D" parent="."]
+
+[node name="Staus" type="Node2D" parent="."]
+script = ExtResource( 4 )
