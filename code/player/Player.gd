@@ -5,7 +5,7 @@ extends Node
 export(Global.PLAYER_TYPE) var type = Global.PLAYER_TYPE.HUMAN
 
 export(NodePath) var map_path:NodePath;
-onready var map = get_node(map_path)
+onready var map:Map = get_node(map_path)
 
 export(Color) var color:Color;
 export(Global.CELL_STATUS) var id =  Global.CELL_STATUS.O
@@ -27,7 +27,10 @@ func turn():
 		yield(get_tree().create_timer(0.2), "timeout")
 		print("turn player id: "+str(id))
 		#var place = choose_rnd_cell(map.map_data)
-		place = choose_best_move(map.map_data, id, 0)
+		#place = choose_best_move(map.map_data, id, 0)
+		place = choose_move_by_weight(map.map_data, id)
+		print ("best pos: " + str(place))
+		map.show_weight(map.map_data)
 		
 		
 		if (place!=null):
@@ -71,6 +74,28 @@ func get_rnd_empty_cells(map_data):
 	places.shuffle()
 	return places
 	
+
+#TODO
+##coose win	
+
+
+func choose_move_by_weight(map_data, player_id):
+	map.calc_line_status()
+	map.calc_weights(map_data, player_id)
+	
+	var max_weight = -1000
+	var res_cell
+	for cell in map.weights:
+		if map.weights[cell] > max_weight:
+			res_cell = cell
+			max_weight = map.weights[cell]
+			
+	return res_cell
+	
+	
+	
+	
+	
 		
 		
 #player id 		
@@ -97,6 +122,9 @@ func choose_best_move(map_data, player_id, depth):
 				if best_score > score:
 					move_place = Vector2(place.x, place.y)
 					best_score = score
+					
+					
+					
 
 	return move_place		
 

@@ -1,5 +1,5 @@
 extends Node
-
+class_name Map
 
 
 export var d = 3
@@ -33,6 +33,10 @@ func clear():
 		n.queue_free()
 	map_data.clear()
 	cells.clear()	
+	
+
+
+
 
 
 func build_map(root_canvas):
@@ -48,6 +52,12 @@ func build_map(root_canvas):
 			add_cell(cell)
 			map_data[Vector2(i,j)] = Global.CELL_STATUS.EMPTY 
 			cells[Vector2(i,j)] = cell
+	
+	
+	init_weights(map_data)
+	init_lines(map_data)		
+
+
 			
 var gap = 1			
 func create_cell(i,j, size):
@@ -158,7 +168,7 @@ func get_game_status_old(data):
 
 
 	
-#winner[ -1: continue; 0: draw;  1: player1; 2: player2]
+#winner[ -1: continue; 0: draw;  1: player1; -1: player2]
 func get_game_status(data):
 	
 	var dimention = d
@@ -218,9 +228,179 @@ func get_game_status(data):
 	
 	return null		
 				
+
+
+
+
+
 				
+var weights = {}		
+
+
+
+func init_weights(map_data):
+	weights.clear()
+	for cell in map_data:
+		weights[cell] = 0
+
+
+func clear_weights(map_data):	
+	for pos in map_data:
+		if !weights.has(pos): continue
+		if map_data[pos] == Global.CELL_STATUS.EMPTY:
+			weights[pos] = 0			
+		else:
+			weights.erase(pos)
+			
+			
+
+
 		
 
+enum LINE_STATUS {
+	ONE = -1, NO_ONE = 0, TOW  = 1, BOTH = -100 ,
+	
+}
+
+var lines = []
+#[{"status":0, "type":0, "pos":[], "value":0}]
+
+
+func init_lines(data):
+	lines.empty()
+	var dimention = d
+	
+	
+	var count = 0
+
+		
+	var line
+	
+	#for vertical		
+	
+	
+	
+	for i in dimention:
+		line = {"status":0, "type":0, "pos":[],"value":0}	
+		for 	j in dimention:
+			line.pos.append(Vector2(i,j))
+		lines.append(line)
+	
+	#for horizont						
+	
+	for j in dimention:
+		line = {"status":0, "type":0, "pos":[],"value":0}
+		for 	i in dimention:
+			line.pos.append(Vector2(i,j))
+		lines.append(line)
+
+
+	#for diagonal i == j	
+	line = {"status":0, "type":0.5, "pos":[],"value":0}
+	for i in dimention:
+		line.pos.append(Vector2(i,i))
+	lines.append(line)	
+	
+	
+	line = {"status":0, "type":0.5, "pos":[],"value":0}
+	for i in dimention:
+		line.pos.append(Vector2(i ,dimention - i -1))
+	lines.append(line)		
+
+
+
+
+
+func calc_line_status():
+	for line in lines:
+		if line.status == LINE_STATUS.BOTH:
+			continue
+			
+		var is_empty	 = false
+		var player1 = 0
+		var player2 = 0
+		var empty_count = 0
+		var cell_status = 0
+		for pos in line.pos:
+			cell_status = map_data[pos]
+			
+			if cell_status > 0:
+				player1+=1
+			elif cell_status < 0:
+				player2+=1	
+				
+		if player1 == 0 && player2 == 0:
+			line.status = LINE_STATUS.NO_ONE	
+			continue
+			
+		if player1!= 0 && player2!=0:
+			line.status = LINE_STATUS.BOTH	
+			continue
+			
+		if player1 != 0 && player2==0:
+			line.status = LINE_STATUS.ONE	
+			line.value = abs(player1)	
+			continue
+		if player1 == 0 && player2 != 0:
+			line.status = LINE_STATUS.TOW
+			line.value = abs(player2)			
+			continue
+
+
+func calc_weights(map_data, player_id):
+	var status = 0
+	clear_weights(map_data)
+	var weigth = 0
+	for pos in weights:
+		for line in lines:
+			if line.status == LINE_STATUS.BOTH:
+				continue
+			var is_empty	 = false
+			var empty_count = 0
+			if line.pos.has(pos):
+				if line.status == LINE_STATUS.NO_ONE:
+					weights[pos] += line.type
+					continue
+					
+				# ONE or TOW	
+				if (line.status == LINE_STATUS.ONE && player_id == 1)||(line.status == LINE_STATUS.TOW && player_id == -1):
+					weights[pos] += line.value + line.type
+					continue
+				
+				#Win in one turn	
+				if line.status == player_id:
+					if abs(line.value) == (d-1):
+						weights[pos] = 1000
+						
+							
+
+					
+##				
+func show_weight(data):
+	var cell 
+	for pos in data:
+		cell = cells.get(pos)
+		if cell == null: continue
+		
+		if weights.has(pos):
+			cell.debug("w:"+str(weights.get(pos))	)
+		else:
+			cell.debug("w:0")	
+			
+		
+				
+				
+				 
+	
+	
+	
+	
+	
+	
+		
+	
+		
+	
 	
 	
 	
